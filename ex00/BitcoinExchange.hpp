@@ -1,0 +1,24 @@
+#include <iostream>
+#include <fstream>
+#include <map>
+#include <cstdlib>
+#include <sstream>
+
+class BitcoinExchange
+{
+private:
+	std::map<std::string, float>	_data;
+	std::ifstream					_inputFile;
+	std::ifstream					_csvFile;
+public:
+	BitcoinExchange();
+	BitcoinExchange(const BitcoinExchange &other);
+	~BitcoinExchange();
+
+	BitcoinExchange	&operator=(const BitcoinExchange &other);
+
+	void	start(std::string inputName);
+private:
+	void	_openFiles(std::string &inputName);
+	void	_readFromCSV();
+};
