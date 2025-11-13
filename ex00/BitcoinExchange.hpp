@@ -3,6 +3,7 @@
 #include <map>
 #include <cstdlib>
 #include <sstream>
+#include <cctype>
 
 class BitcoinExchange
 {
@@ -20,5 +21,12 @@ public:
 	void	start(std::string inputName);
 private:
 	void	_openFiles(std::string &inputName);
+	bool	_validInput(std::stringstream &valueStream, std::string &line, std::string &date, float value);
+	bool	_isValidDate(std::string &date);
+
+	std::string	_trimString(std::string str);
+	std::map<std::string, float>::const_iterator	_findDate(std::string &date);
+
 	void	_readFromCSV();
+	void	_processInputFile();
 };
