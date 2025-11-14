@@ -1,12 +1,16 @@
 #pragma once
 
 #include <stack>
+#include <vector>
 #include <iostream>
+#include <cstdlib>
+#include <sstream>
 
 class RPN
 {
 private:
-	// TODO
+	std::vector<std::string>	_inputTokens;
+	std::stack<int>				_stack;
 public:
 	RPN();
 	RPN(const RPN &other);
@@ -15,4 +19,9 @@ public:
 	RPN	&operator=(const RPN &other);
 
 	void	start(std::string input);
+private:
+	bool	_tokenIsValid(std::string &token);
+	
+	void	_splitInput(std::string &input);
+	void	_processInout();
 };
