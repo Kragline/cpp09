@@ -106,22 +106,23 @@ bool	BitcoinExchange::_isValidDate(std::string &date)
 	return (true);
 }
 
-bool	BitcoinExchange::_validInput(
-	std::stringstream &valueStream, std::string &line, std::string &date, float value
-)
+bool	BitcoinExchange::_validateNumber(std::string &sValue, std::string &line, float &fValue)
 {
-	if (valueStream.fail() || !_isValidDate(date))
+	std::stringstream	valueStream(sValue);
+	valueStream >> fValue;
+
+	if (valueStream.fail())
 	{
 		std::cerr << "Error: bad input => " << line << std::endl;
 		return (false);
 	}
 
-	if (value < 0)
+	if (fValue < 0)
 	{
 		std::cerr << "Error: not a positive number." << std::endl;
 		return (false);
 	}
-	if (value > 1000)
+	if (fValue > 1000)
 	{
 		std::cerr << "Error: too large number." << std::endl;
 		return (false);
@@ -173,9 +174,7 @@ void	BitcoinExchange::_processInputFile()
         date = _trimString(line.substr(0, pos));
         sValue = _trimString(line.substr(pos + 1));
 
-		std::stringstream	valueStream(sValue);
-		valueStream >> fValue;
-		if (!_validInput(valueStream, line, date, fValue))
+		if (!_validateNumber(sValue, line, fValue))
 			continue;
 		
 		std::map<std::string, float>::const_iterator	it = _findDate(date);

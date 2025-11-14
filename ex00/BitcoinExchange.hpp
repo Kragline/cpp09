@@ -21,7 +21,7 @@ public:
 	void	start(std::string inputName);
 private:
 	void	_openFiles(std::string &inputName);
-	bool	_validInput(std::stringstream &valueStream, std::string &line, std::string &date, float value);
+	bool	_validateNumber(std::string &sValue, std::string &line, float &fValue);
 	bool	_isValidDate(std::string &date);
 
 	std::string	_trimString(std::string str);
