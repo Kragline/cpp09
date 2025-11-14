@@ -64,7 +64,7 @@ void	BitcoinExchange::_readFromCSV()
 	}
 }
 
-std::string	BitcoinExchange::_trimString(std::string str)
+std::string	BitcoinExchange::_trimString(std::string str) const
 {
 	size_t	start = str.find_first_not_of(" \t");
 	size_t	end = str.find_last_not_of(" \t");
@@ -76,7 +76,7 @@ std::string	BitcoinExchange::_trimString(std::string str)
 	return (str);
 }
 
-bool	BitcoinExchange::_isValidDate(std::string &date)
+bool	BitcoinExchange::_isValidDate(std::string &date) const
 {
 	if (date.size() != 10)
 		return (false);
@@ -106,7 +106,7 @@ bool	BitcoinExchange::_isValidDate(std::string &date)
 	return (true);
 }
 
-bool	BitcoinExchange::_validateNumber(std::string &sValue, std::string &line, float &fValue)
+bool	BitcoinExchange::_validateNumber(std::string &sValue, std::string &line, float &fValue) const
 {
 	std::stringstream	valueStream(sValue);
 	valueStream >> fValue;
@@ -130,7 +130,7 @@ bool	BitcoinExchange::_validateNumber(std::string &sValue, std::string &line, fl
 	return (true);
 }
 
-std::map<std::string, float>::const_iterator	BitcoinExchange::_findDate(std::string &date)
+std::map<std::string, float>::const_iterator	BitcoinExchange::_findDate(std::string &date) const
 {
 	std::map<std::string, float>::const_iterator	it = _data.lower_bound(date);
 

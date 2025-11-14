@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -21,11 +23,11 @@ public:
 	void	start(std::string inputName);
 private:
 	void	_openFiles(std::string &inputName);
-	bool	_validateNumber(std::string &sValue, std::string &line, float &fValue);
-	bool	_isValidDate(std::string &date);
+	bool	_validateNumber(std::string &sValue, std::string &line, float &fValue) const ;
+	bool	_isValidDate(std::string &date) const ;
 
-	std::string	_trimString(std::string str);
-	std::map<std::string, float>::const_iterator	_findDate(std::string &date);
+	std::string	_trimString(std::string str) const ;
+	std::map<std::string, float>::const_iterator	_findDate(std::string &date) const ;
 
 	void	_readFromCSV();
 	void	_processInputFile();
