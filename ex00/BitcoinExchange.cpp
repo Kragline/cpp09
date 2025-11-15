@@ -76,24 +76,21 @@ std::string	BitcoinExchange::_trimString(std::string str) const
 	return (str);
 }
 
-bool	BitcoinExchange::_isValidDate(std::string &date) const
+bool	BitcoinExchange::_isValidDate(std::string &date, std::string &line) const
 {
 	if (date.size() != 10)
 		return (false);
 	if (date[4] != '-' || date[7] != '-')
 		return (false);
 	
-	std::string	y = date.substr(0, 4);
-	std::string	m = date.substr(5, 2);
-	std::string	d = date.substr(8, 2);
+	int	year, month, day;
+	if (!_convertNumber(date.substr(0, 4), year) || !_convertNumber(date.substr(5, 2), month)
+		|| !_convertNumber(date.substr(8, 2), day))
+	{
+		std::cerr << "Error: bad input => " << line << std::endl;
+		return (false);
+	}
 
-	for (size_t i = 0; i < y.size(); i++) if (!std::isdigit(y[i])) return (false);
-	for (size_t i = 0; i < m.size(); i++) if (!std::isdigit(m[i])) return (false);
-	for (size_t i = 0; i < d.size(); i++) if (!std::isdigit(d[i])) return (false);
-	
-	int	year = std::atoi(y.c_str());
-	int	month = std::atoi(m.c_str());
-	int	day = std::atoi(d.c_str());
 	int	daysInMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
     if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
@@ -102,21 +99,20 @@ bool	BitcoinExchange::_isValidDate(std::string &date) const
 	}
 
 	if (day < 1 || day > daysInMonth[month - 1])
-		return (false);
-	return (true);
-}
-
-bool	BitcoinExchange::_validateNumber(std::string &sValue, std::string &line, float &fValue) const
-{
-	std::stringstream	valueStream(sValue);
-	valueStream >> fValue;
-
-	if (valueStream.fail())
 	{
 		std::cerr << "Error: bad input => " << line << std::endl;
 		return (false);
 	}
+	return (true);
+}
 
+bool	BitcoinExchange::_isValidNumber(std::string &sValue, std::string &line, float &fValue) const
+{
+	if (!_convertNumber(sValue, fValue))
+	{
+		std::cerr << "Error: bad input => " << line << std::endl;
+		return (false);
+	}
 	if (fValue < 0)
 	{
 		std::cerr << "Error: not a positive number." << std::endl;
@@ -174,7 +170,7 @@ void	BitcoinExchange::_processInputFile()
         date = _trimString(line.substr(0, pos));
         sValue = _trimString(line.substr(pos + 1));
 
-		if (!_validateNumber(sValue, line, fValue))
+		if (!_isValidDate(date, line) || !_isValidNumber(sValue, line, fValue))
 			continue;
 		
 		std::map<std::string, float>::const_iterator	it = _findDate(date);
