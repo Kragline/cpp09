@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
+#include <stdexcept>
 
 class RPN
 {
@@ -20,8 +21,13 @@ public:
 
 	void	start(std::string input);
 private:
-	bool	_tokenIsValid(std::string &token);
+	bool	_isOperation(std::string &token) const ;
+	bool	_tokenIsValid(std::string &token) const ;
+	bool	_convertNumber(std::string &sValue, int &value) const ;
+	void	_trimToken(std::string &token) const ;
+	
+	int		_calculate(int num1, int num2, std::string &operand) const ;
 	
 	void	_splitInput(std::string &input);
-	void	_processInout();
+	void	_processInput();
 };
