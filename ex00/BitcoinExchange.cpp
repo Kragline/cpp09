@@ -6,8 +6,10 @@ BitcoinExchange::BitcoinExchange(const BitcoinExchange &other) : _data(other._da
 
 BitcoinExchange::~BitcoinExchange()
 {
-	_inputFile.close();
-	_csvFile.close();
+	if (_inputFile.is_open())
+		_inputFile.close();
+	if (_csvFile.is_open())
+		_csvFile.close();
 }
 
 BitcoinExchange	&BitcoinExchange::operator=(const BitcoinExchange &other)
@@ -21,18 +23,11 @@ void	BitcoinExchange::_openFiles(std::string &inputName)
 {
 	_inputFile.open(inputName.c_str());
 	if (!_inputFile.is_open())
-	{
-		std::cerr << "Error: failed to open " << inputName << " file." << std::endl;
-		exit(1);
-	}
+		throw std::runtime_error("Error: failed to open " + inputName + " file.");
 
 	_csvFile.open("data.csv");
-	if (!_inputFile.is_open())
-	{
-		std::cerr << "Error: failed to open data.csv file." << std::endl;
-		_inputFile.close();
-		exit(1);
-	}
+	if (!_csvFile.is_open())
+		throw std::runtime_error("Error: failed to open data.csv file.");
 }
 
 void	BitcoinExchange::_readFromCSV()
@@ -78,14 +73,14 @@ std::string	BitcoinExchange::_trimString(std::string str) const
 
 bool	BitcoinExchange::_isValidDate(std::string &date, std::string &line) const
 {
-	if (date.size() != 10)
-		return (false);
-	if (date[4] != '-' || date[7] != '-')
-		return (false);
-	
 	int	year, month, day;
-	if (!_convertNumber(date.substr(0, 4), year) || !_convertNumber(date.substr(5, 2), month)
-		|| !_convertNumber(date.substr(8, 2), day))
+	
+	if (date.size() != 10 || date[4] != '-' || date[7] != '-'
+		|| !_convertNumber(date.substr(0, 4), year)
+		|| !_convertNumber(date.substr(5, 2), month)
+		|| !_convertNumber(date.substr(8, 2), day)
+		|| std::count(date.begin(), date.end(), '-') != 2
+		|| date.find_first_not_of("0123456789-") != std::string::npos)
 	{
 		std::cerr << "Error: bad input => " << line << std::endl;
 		return (false);
@@ -185,7 +180,14 @@ void	BitcoinExchange::_processInputFile()
 
 void	BitcoinExchange::start(std::string inputName)
 {
-	_openFiles(inputName);
-	_readFromCSV();
-	_processInputFile();
+	try
+	{
+		_openFiles(inputName);
+		_readFromCSV();
+		_processInputFile();
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
 }

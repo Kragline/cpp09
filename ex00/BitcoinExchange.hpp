@@ -7,6 +7,7 @@
 #include <sstream>
 #include <cctype>
 #include <stdexcept>
+#include <algorithm>
 
 class BitcoinExchange
 {

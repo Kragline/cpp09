@@ -2,16 +2,14 @@
 
 RPN::RPN() {}
 
-RPN::RPN(const RPN &other)
-{
-	(void)other;
-}
+RPN::RPN(const RPN &other) : _inputTokens(other._inputTokens) {}
 
 RPN::~RPN() {}
 
 RPN	&RPN::operator=(const RPN &other)
 {
-	(void)other;
+	if (this != &other)
+		_inputTokens = other._inputTokens;
 	return (*this);
 }
 

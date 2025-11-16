@@ -1,7 +1,7 @@
 NAME = btc
 
 CPP = c++
-CPP_FLAGS = -Wall -Wextra -Werror -std=c++98
+CPP_FLAGS = -Wall -Wextra -Werror -std=c++98 -g3
 
 FILENAMES = main BitcoinExchange
 SOURCES = $(addsuffix .cpp, $(FILENAMES))
