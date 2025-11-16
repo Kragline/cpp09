@@ -22,12 +22,12 @@ bool	RPN::_isOperation(std::string &token) const
 	return (token.find_first_of("+-*/") != std::string::npos ? true : false);
 }
 
-bool	RPN::_convertNumber(std::string &sValue, int &value) const
+bool	RPN::_isAllSpace(std::string &input) const
 {
-	std::stringstream	valueStream(sValue);
-	valueStream >> value;
-
-	return (valueStream.fail() ? false : true);
+	for (size_t i = 0; i < input.size(); i++)
+		if (!std::isspace(input[i]))
+			return (false);
+	return (true);
 }
 
 void	RPN::_trimToken(std::string &token) const
@@ -42,15 +42,16 @@ void	RPN::_trimToken(std::string &token) const
 }
 
 bool	RPN::_tokenIsValid(std::string &token) const
-{
-	int	number;
-
+{	
+	
 	if (_isOperation(token))
 		return (true);
 	
-	if (!_convertNumber(token, number))
-		return (false);
-	return (number >= 10 ? false : true);
+	int					number;
+	std::stringstream	ss(token);
+	ss >> number;
+
+	return (ss.fail() || number >= 10 ? false : true);
 }
 
 void	RPN::_splitInput(std::string &input)
@@ -67,24 +68,18 @@ void	RPN::_splitInput(std::string &input)
 		if (_tokenIsValid(token))
 			_inputTokens.push_back(token);
 		else
-		{
-			std::cerr << "Error" << std::endl;
-			exit(1);
-		}
+			throw std::runtime_error("Error");
 	}
 }
 
 int	RPN::_calculate(int num1, int num2, std::string &operand) const
 {
-	if (operand == "+")
-		return (num1 + num2);
-	if (operand == "-")
-		return (num1 - num2);
-	if (operand == "*")
-		return (num1 * num2);
+	if (operand == "+") return (num1 + num2);
+	if (operand == "-") return (num1 - num2);
+	if (operand == "*") return (num1 * num2);
 	
 	if (num2 == 0)
-		throw std::runtime_error("Error");		
+		throw std::runtime_error("Error");
 	return (num1 / num2);
 }
 
@@ -92,46 +87,45 @@ void	RPN::_processInput()
 {
 	int	num, num1, num2, result;
 
-	for (size_t i = 0; i < _inputTokens.size(); i++)
+	for (std::list<std::string>::iterator it = _inputTokens.begin(); it != _inputTokens.end(); ++it)
 	{
-		if (_isOperation(_inputTokens[i]))
+		if (_isOperation(*it))
 		{
 			if (_stack.size() < 2)
-			{
-				std::cerr << "Error process" << std::endl;
-				exit(1);
-			}
+				throw std::runtime_error("Error");
+			
 			num2 = _stack.top();
 			_stack.pop();
 			num1 = _stack.top();
 			_stack.pop();
-			try
-			{
-				result = _calculate(num1, num2, _inputTokens[i]);
-			}
-			catch(const std::exception& e)
-			{
-				std::cerr << e.what() << std::endl;
-				exit(1);
-			}
+
+			result = _calculate(num1, num2, *it);
 			_stack.push(result);
 		}
 		else
 		{
-			_convertNumber(_inputTokens[i], num);
+			std::stringstream(*it) >> num;
 			_stack.push(num);
 		}
 	}
+
+	if (_stack.size() != 1)
+        throw std::runtime_error("Error");
 	std::cout << _stack.top() << std::endl;
 }
 
 void	RPN::start(std::string input)
 {
-	if (input.find_first_not_of(" 0123456789+-*/") != std::string::npos)
+	try
 	{
-		std::cerr << "Error" << std::endl;
-		exit(1);
+		if (input.empty() || _isAllSpace(input))
+			throw std::runtime_error("Error");
+
+		_splitInput(input);
+		_processInput();
 	}
-	_splitInput(input);
-	_processInput();
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
 }

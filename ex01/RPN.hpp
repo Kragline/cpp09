@@ -1,16 +1,17 @@
 #pragma once
 
 #include <stack>
-#include <vector>
+#include <list>
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
 #include <stdexcept>
+#include <cctype>
 
 class RPN
 {
 private:
-	std::vector<std::string>	_inputTokens;
+	std::list<std::string>	_inputTokens;
 	std::stack<int>				_stack;
 public:
 	RPN();
@@ -23,7 +24,7 @@ public:
 private:
 	bool	_isOperation(std::string &token) const ;
 	bool	_tokenIsValid(std::string &token) const ;
-	bool	_convertNumber(std::string &sValue, int &value) const ;
+	bool	_isAllSpace(std::string &input) const ;
 	void	_trimToken(std::string &token) const ;
 	
 	int		_calculate(int num1, int num2, std::string &operand) const ;
