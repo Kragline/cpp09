@@ -15,8 +15,6 @@ RPN	&RPN::operator=(const RPN &other)
 
 bool	RPN::_isOperation(std::string &token) const
 {
-	if (token.size() != 1)
-		return (false);
 	return (token.find_first_of("+-*/") != std::string::npos ? true : false);
 }
 
@@ -41,15 +39,17 @@ void	RPN::_trimToken(std::string &token) const
 
 bool	RPN::_tokenIsValid(std::string &token) const
 {	
+	if (token.size() != 1)
+		return (false);
 	
 	if (_isOperation(token))
 		return (true);
 	
-	int					number;
-	std::stringstream	ss(token);
-	ss >> number;
+	if (!std::isdigit(token[0]))
+		return (false);
 
-	return (ss.fail() || number >= 10 ? false : true);
+	int	number = token[0] - '0';
+	return (number < 0 || number > 9 ? false : true);
 }
 
 void	RPN::_splitInput(std::string &input)
@@ -83,7 +83,7 @@ int	RPN::_calculate(int num1, int num2, std::string &operand) const
 
 void	RPN::_processInput()
 {
-	int	num, num1, num2, result;
+	int	num1, num2, result;
 
 	for (std::list<std::string>::iterator it = _inputTokens.begin(); it != _inputTokens.end(); ++it)
 	{
@@ -102,8 +102,7 @@ void	RPN::_processInput()
 		}
 		else
 		{
-			std::stringstream(*it) >> num;
-			_stack.push(num);
+			_stack.push((*it)[0] - '0');
 		}
 	}
 
