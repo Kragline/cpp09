@@ -86,6 +86,12 @@ bool	BitcoinExchange::_isValidDate(std::string &date, std::string &line) const
 		return (false);
 	}
 
+	if (month < 1 || month > 12)
+	{
+		std::cerr << "Error: bad input => " << line << std::endl;
+		return (false);
+	}
+
 	int	daysInMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
     if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))

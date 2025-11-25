@@ -187,8 +187,8 @@ void	PmergeMe::_sort()
 	std::cout << "After:  ";
 	_printContainer(_vec);
 
-	std::cout << "Time to process a range of " << _vec.size() << " elements with std::vector : " << vectorTime << " us\n";
-	std::cout << "Time to process a range of " << _deq.size() << " elements with std::deque  : " << dequeTime << " us\n";
+	std::cout << "Time to process a range of " << _vec.size() << " elements with std::vector : " << vectorTime << " us" << std::endl;
+	std::cout << "Time to process a range of " << _deq.size() << " elements with std::deque  : " << dequeTime << " us" << std::endl;
 }
 
 void	PmergeMe::start(char **argv)
